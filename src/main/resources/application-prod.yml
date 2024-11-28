@@ -1,0 +1,110 @@
+# yaml(*.yml)
+#     yet another markup language
+#     가벼운 마크업 언어로 사용
+#
+# 기본 문법
+#   # 는 주석
+#   기본표현
+#      key: value     <- : 다음에는 반드시 공백문자가 와야 함
+#
+#   key:
+#       key_1:
+#           key_2:
+#               key_3:
+#                   ..
+
+
+server:
+  port: 80 # 서버포트 번호
+  tomcat:
+    max-http-form-post-size: 10GB
+
+spring:
+  application:
+    name: KBoard
+
+  # Thymeleaf 설정
+  thymeleaf:
+    cache: false
+    prefix: classpath:templates/views/
+
+  # datasource 설정. MySql등 spring-jdbc 사용시 아래 정보 없으면 서버가동 에러.
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${rds.hostname}:${rds.port}/${rds.db.name}?useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: ${rds.username}
+    password: ${rds.password}
+
+  # security
+  security:
+    user:
+      name: user
+      password: 1234
+
+    # oauth2 client 구루 관련
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: haha
+            client-secret: haha
+            scope:
+              - email
+              - profile
+          facebook:
+            client-id: 1  # 앱 ID
+            client-secret: 1 # 앱 시크릿 코드
+            scope:
+              - email
+              - public_profile
+          naver:
+            client-id: f_word
+            client-secret: f_word
+            scope:
+              - name
+              - email
+            client-name: Naver
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8080/login/oauth2/code/naver
+        #provider 제공. 구루나 페북은 oauth에 있지만 게이버나 카톡은 없다...
+        provider:
+          naver:
+            authorization-uri: https://nid.naver.com/oauth2.0/authorize
+            token-uri: https://nid.naver.com/oauth2.0/token
+            user-info-uri: https://openapi.naver.com/v1/nid/me
+            user-name-attribute: response
+
+  servlet:
+    multipart:
+      max-file-size: 10GB     # 요청파일 개당 한계
+      max-request-size: 10GB  # 요청파일 전체 한계
+
+# MyBatis 매퍼(mapper) 파일 위치 설정
+# src/main/resources 이하의 경로 지정
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+
+
+
+app:
+  # 페이징 관련 세팅값
+  pagination:
+    write_pages: 10   # 한 [페이징] 당 몇개의 페이지가 표시되나?
+    page_rows: 10   # 한 '페이지' 에 몇개의 글을 리스트 할것인지?
+  #파일 업로드 경로
+  upload:
+    path: upload
+  #oauth2
+  oauth2:
+    #oauth 가입 시 자동저장되는 비밀번호. 보안은 알아서 잘하쟈
+    password: cex
+    #카카오 로그인 세팅
+    kakao:
+      client-id: sibal  #앱키
+      redirect-uri: http://localhost:8080/oauth2/kakao/callback
+      token-uri: https://kauth.kakao.com/oauth/token
+      user-info-uri: https://kapi.kakao.com/v2/user/me
+
+
+
+
